@@ -1,13 +1,12 @@
 source synopsys_tools.sh;
+rm -rfv `ls |grep -v ".*\.sv\|.*\.sh"`;
 
-rm -rfv `ls |grep -v ".*\.sv\|.*\.sh\|.*\.md"`;
+vcs -Mupdate test_bench.sv  -o salida -full64 -debug_all -sverilog -l log_test -ntb_opts uvm-1.2 +lint=TFIPC-L -cm line+tgl+cond+fsm+branch+assert +UVM_VERBOSITY=UVM_HIGH;
 
-#vcs -Mupdate Test_Power.sv  -o salida -full64 -debug_all -sverilog -l log_test +lint=TFIPC-L -cm line+tgl+cond+fsm+branch+assert;
-#vcs -Mupdate Test_fifo.sv  -o salida -full64 -debug_all -sverilog -l log_test +lint=TFIPC-L -cm line+tgl+cond+fsm+branch+assert;
-#vcs -Mupdate testbench_cov.sv  -o salida -full64 -debug_all -sverilog -l log_test +lint=TFIPC-L -cm line+tgl+cond+fsm+branch+assert;
-vcs -Mupdate testbench.sv  -o salida -full64 -debug_all -sverilog -l log_test +lint=TFIPC-L -cm line+tgl+cond+fsm+branch+assert;
+./salida +UVM_VERBOSITY=UVM_HIGH +UVM_TESTNAME=test_1011 +ntb_random_seed=1 > deleteme_log_1
+./salida +UVM_VERBOSITY=UVM_HIGH +UVM_TESTNAME=test_1011 +ntb_random_seed=2 > deleteme_log_2
 
-./salida -cm line+tgl+cond+fsm+branch+assert;
+#./salida -cm line+tgl+cond+fsm+branch+assert;
 #dve -full64 -covdir salida.vdb &
 
 #./salida -gui&
