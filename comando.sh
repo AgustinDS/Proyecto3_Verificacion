@@ -7,6 +7,9 @@ vcs -Mupdate test_bench.sv  -o salida -full64 -debug_all -sverilog -l log_test -
 ./salida +UVM_VERBOSITY=UVM_HIGH +UVM_TESTNAME=test_1011 +ntb_random_seed=2 > deleteme_log_2
 
 #./salida -cm line+tgl+cond+fsm+branch+assert;
+
+# Para visualizar la covertura
 #dve -full64 -covdir salida.vdb &
 
+# Para visualizar las formas de onda
 #./salida -gui&
