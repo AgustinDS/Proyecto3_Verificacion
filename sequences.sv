@@ -18,9 +18,9 @@ class base_seq extends uvm_sequence;
       
       Item item = Item::type_id::create("item");
 
-      start_item(m_item);
+      start_item(item);
 
-      if( !m_item.randomize() )
+      if( !item.randomize() )
         `uvm_error("SEQ", "Randomize failed")
       
       `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
@@ -28,7 +28,7 @@ class base_seq extends uvm_sequence;
       finish_item(item);
 
     end
-    
+
     `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
   endtask
 
