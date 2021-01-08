@@ -6,12 +6,12 @@ interface dut_if (input bit clk);
 
   clocking cb @(posedge clk);
     default input #1step output #3ns;
-        input fp_Z;
-        input ovrf;
-        input udrf;
-        output r_mode;
-        output fp_X;
-        output fp_Y;
+        input fp_Z;  //Salida
+        input ovrf;  // overflow
+        input udrf  //underflow
+        output r_mode;  //mode
+        output fp_X; //A
+        output fp_Y; //B
      endclocking 
      
 endinterface

@@ -9,7 +9,7 @@ class monitor extends uvm_monitor;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual des_if)::get(this,"","des_vif",vif))
+    if(!uvm_config_db#(virtual dut_if)::get(this,"","des_vif",vif))
       `uvm_fatal("MON","Could not get vif")
     mon_analysis_port = new("mon_analysis_port", this);
   endfunction
@@ -20,8 +20,12 @@ class monitor extends uvm_monitor;
       @(vif.cb);
         if(vif.rstn) begin
           Item item = Item::type_id::create("item");
-          item.in = vif.in;
-          item.out = vif.cb.out;
+          item.fp_Z = vif.cb.fp_Z;   //Salida
+          item.ovrf = vif.cb.ovrf;   // overflow
+          item.udrf = vif.cb.udrf;   //underflow
+          item.r_mode = vif.r_mode;  //mode
+          item.fp_X = vif.fp_X;      //A
+          item.fp_Y = vif.fp_Y;      //B
           mon_analysis_port.write(item);
           `uvm_info("MON",$sformatf("SAW item %s", item.convert2str()),UVM_HIGH)
         end
