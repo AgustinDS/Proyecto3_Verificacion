@@ -32,7 +32,8 @@ class scoreboard extends uvm_scoreboard;
 
         //UNDERFLOW
         //OVERFLOW
-        
+        //NAN
+
     endfunction
 
 endclass
