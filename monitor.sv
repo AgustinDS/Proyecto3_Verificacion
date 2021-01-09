@@ -21,6 +21,8 @@ class monitor extends uvm_monitor;
         if(vif.rstn) begin
           Item item = Item::type_id::create("item");
           
+          //El monitor toma tanto las entradas como las salidas de una operación ya ejecutada [anterior]
+
           //toma el valor de todas las salidas que había justo antes del posedge del reloj [anterior]
           item.fp_Z = vif.cb.fp_Z;   //Salida
           item.ovrf = vif.cb.ovrf;   // overflow
