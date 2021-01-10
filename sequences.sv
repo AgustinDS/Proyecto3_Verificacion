@@ -33,3 +33,11 @@ class base_seq extends uvm_sequence;
   endtask
 
 endclass
+
+// Secuencia específica (1s, 0s, Fs, As)
+
+// Secuencia que genere overflow
+
+// Secuencia que genere underflow
+
+// Secuencia que genere NaN

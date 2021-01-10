@@ -6,11 +6,12 @@
 `include "sequence_item.sv"
 `include "sequences.sv"
 
-module testbenchs;
+module top_testbench;
 
 	import uvm_pkg::*;
 
 	initial begin
 		`uvm_info("TOP", "Test start", UVM_LOW)
 	end
+	
 endmodule
