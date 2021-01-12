@@ -27,8 +27,6 @@ class scoreboard extends uvm_scoreboard;
 
         ///////GOLDEN REFERENCE////////
 
-
-
         exp_field_X=item.fp_X[30:23];
 
         fract_field_X=item.fp_X[22:0];
@@ -39,9 +37,9 @@ class scoreboard extends uvm_scoreboard;
         
         sign_field_Z=item.fp_X[31]^item.fp_Y[31];
 
-        exp_field_Z=item.fp_X[30:23]+item.fp_Y[30:23]-127;
+        exp_field_Z=exp_field_X+exp_field_Y-127;
 
-        fracZ=item.fp_X[22:0]+(item.fp_X[22:0]*item.fp_Y[22:0])/8388608+item.fp_Y[22:0];
+        fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y;
 
         fract_Z_unR=fracZ*2; // shift the decimal point one time
 
@@ -105,23 +103,39 @@ class scoreboard extends uvm_scoreboard;
             nan_Z=1;
         end
 
-        und_X  =(!(|exp_field_X) && !(|fract_field_X))? 1 : 0; // If both exp and fract field are 0 then underflow
+        if (exp_field_Z>=2**8) begin
+            exp_field_Z=8'b11111111;
+        end
+
+
+        und_X  =!(|exp_field_X)?1 : 0; //If exp is 0 then underflow
         over_X =(&exp_field_X)? 1 : 0; //If exp field is 'd255 then overflow
 
-        und_Y  =(!(|exp_field_Y) && !(|fract_field_Y))? 1 : 0; // If both exp and fract field are 0 then underflow
+        und_Y  =!(|exp_field_Y)?1 : 0; //If exp is 0 then underflow
         over_Y =(&exp_field_Y)? 1 : 0; //If exp field is 'd255 then overflow
         
-        und_Z  =(!(|exp_field_Z) && !(|fract_field_Z))? 1 : 0; // If both exp and fract field are 0 then underflow
+        und_Z  =!(|exp_field_Z)?1 : 0; //If exp is 0 then underflow
         over_Z =(&exp_field_Z)? 1 : 0; //If exp field is 'd255 then overflow
 
-        nan_X = &exp_field_X & |fract_field_X;
+        nan_X = &exp_field_X & |fract_field_X; //NaN definition
         nan_Y = &exp_field_Y & |fract_field_Y;
-        nan_Z = &exp_field_Z & |fract_field_Z;
+
 
         nan_Z = {und_X & over_Y} | {over_X & und_Y} | nan_Z; //Infinity*0 or 0*Infinity
         nan_Z = nan_X | nan_Y | nan_Z; //Nan propagation
 
-        crrt_Z={sign_field_Z,exp_field_Z,fract_field_Z};  //correct result
+        if (und_Z) begin
+            crrt_Z={sign_field_Z,8'b0,23'b0};  //correct result
+        end 
+        else if (over_Z) begin
+            crrt_Z={sign_field_Z,8'b11111111,23'b0};  //correct result
+        end
+        else if (nan_Z) begin
+            crrt_Z={sign_field_Z,8'b11111111,1,22'b0};  //correct result
+        end
+        else begin
+            crrt_Z={sign_field_Z,exp_field_Z,fract_field_Z};  //correct result
+        end
 
         //////////////////////////////
 
@@ -129,7 +143,7 @@ class scoreboard extends uvm_scoreboard;
         `uvm_info("SCBD", $sformatf("Mode=%0b Op_x=%0b Op_y=%0b Result=%0b Correct=%0b Overflow=%0b 
         Underflow=%0b", item.r_mode,item.fp_X,item.fp_Y,item.fp_Z,crrt_Z,item.ovrf,item.udrf), UVM_LOW)
         
-        if(item.fp_Z != exp_Z) begin
+        if(item.fp_Z !=crrt_Z ) begin
             `uvm_error("SCBD",$sformatf("ERROR ! Result=%0b Correct=%0b", item.fp_Z,crrt_Z))
         end else begin
             `uvm_info("SCBD",$sformatf("PASS ! Result=%0b Correct=%0b",item.fp_Z,crrt_Z), UVM_HIGH)
