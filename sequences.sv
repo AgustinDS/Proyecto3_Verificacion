@@ -70,7 +70,7 @@ class esp_seq extends uvm_sequence;
         `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
       
         finish_item(item);
-      endtask : body
+      end
     end
 
     `uvm_info("SEQ",$sformatf("Done generation of %0d items", 4),UVM_LOW);
@@ -112,9 +112,10 @@ class seq_ovrflw extends uvm_sequence;
       
       finish_item(item);
 
-    endtask
+    end
 
     `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
+  endtask
 endclass
 
 
@@ -152,9 +153,10 @@ class seq_undrflw extends uvm_sequence;
       
       finish_item(item);
 
-    endtask
+    end
 
     `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
+  endtask
 endclass
 
 // Secuencia que genere NaN
@@ -191,7 +193,8 @@ class seq_NaN extends uvm_sequence;
       
       finish_item(item);
 
-    endtask
+    end
 
     `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
+  endtask
 endclass
