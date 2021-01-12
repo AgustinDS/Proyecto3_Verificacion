@@ -18,6 +18,12 @@ class base_seq extends uvm_sequence;
       
       Item item = Item::type_id::create("item");
 
+      // Configuración de constraints
+      item.c_rndm_item.constraint_mode(1);
+      item.c_ovrflw.constraint_mode(0);
+      item.c_undrflw.constraint_mode(0);
+      item.c_NaN.constraint_mode(0);
+
       start_item(item);
 
       if( !item.randomize() )
@@ -64,7 +70,7 @@ class esp_seq extends uvm_sequence;
         `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
       
         finish_item(item);
-      end
+      endtask : body
     end
 
     `uvm_info("SEQ",$sformatf("Done generation of %0d items", 4),UVM_LOW);
@@ -73,9 +79,119 @@ class esp_seq extends uvm_sequence;
 endclass
 
 // Secuencia que genere overflow
+class seq_ovrflw extends uvm_sequence;
+  `uvm_object_utils(seq_ovrflw);
+  
+  function new(string name="seq_ovrflw");
+    super.new(name);
+  endfunction
+
+  // Cantidad de transacciones generadas en la secuencia
+  rand int n;
+
+  // Limite de la cantidad aleatoria de transacciones generadas
+  constraint c_n {soft n inside {[5:10]};}
+
+  virtual task body();
+    for(int i = 0; i < n; i++)begin
+      
+      Item item = Item::type_id::create("item");
+
+      // Configuración de constraints
+      item.c_rndm_item.constraint_mode(0);
+      item.c_ovrflw.constraint_mode(1);
+      item.c_undrflw.constraint_mode(0);
+      item.c_NaN.constraint_mode(0);
+
+      start_item(item);
+
+      if( !item.randomize() )
+        `uvm_error("SEQ", "Randomize failed")
+      
+      `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
+      
+      finish_item(item);
+
+    endtask
+
+    `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
+endclass
 
 
 // Secuencia que genere underflow
+class seq_undrflw extends uvm_sequence;
+  `uvm_object_utils(seq_undrflw);
+  
+  function new(string name="seq_undrflw");
+    super.new(name);
+  endfunction
 
+  // Cantidad de transacciones generadas en la secuencia
+  rand int n;
+
+  // Limite de la cantidad aleatoria de transacciones generadas
+  constraint c_n {soft n inside {[5:10]};}
+
+  virtual task body();
+    for(int i = 0; i < n; i++)begin
+      
+      Item item = Item::type_id::create("item");
+
+      // Configuración de constraints
+      item.c_rndm_item.constraint_mode(0);
+      item.c_ovrflw.constraint_mode(0);
+      item.c_undrflw.constraint_mode(1);
+      item.c_NaN.constraint_mode(0);
+
+      start_item(item);
+
+      if( !item.randomize() )
+        `uvm_error("SEQ", "Randomize failed")
+      
+      `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
+      
+      finish_item(item);
+
+    endtask
+
+    `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
+endclass
 
 // Secuencia que genere NaN
+class seq_NaN extends uvm_sequence;
+  `uvm_object_utils(seq_NaN);
+  
+  function new(string name="seq_NaN");
+    super.new(name);
+  endfunction
+
+  // Cantidad de transacciones generadas en la secuencia
+  rand int n;
+
+  // Limite de la cantidad aleatoria de transacciones generadas
+  constraint c_n {soft n inside {[5:10]};}
+
+  virtual task body();
+    for(int i = 0; i < n; i++)begin
+      
+      Item item = Item::type_id::create("item");
+
+      // Configuración de constraints
+      item.c_rndm_item.constraint_mode(0);
+      item.c_ovrflw.constraint_mode(0);
+      item.c_undrflw.constraint_mode(0);
+      item.c_NaN.constraint_mode(1);
+
+      start_item(item);
+
+      if( !item.randomize() )
+        `uvm_error("SEQ", "Randomize failed")
+      
+      `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
+      
+      finish_item(item);
+
+    endtask
+
+    `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
+endclass
