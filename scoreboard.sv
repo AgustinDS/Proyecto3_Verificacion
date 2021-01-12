@@ -7,7 +7,7 @@ class scoreboard extends uvm_scoreboard;
 
     bit [31:0] crrt_Z;
     bit [32:0] fract_Z_unR; // fracZ without rounding.
-    bit und,over,nan;
+    bit und,over,nan_X,nan_Y,nan_Z;
     real fracZ; //fracZ as decimal point data
     
     bit sign_field_Z;
@@ -28,6 +28,8 @@ class scoreboard extends uvm_scoreboard;
         ///////GOLDEN REFERENCE////////
         
         sign_field_Z=item.fp_X[31]^item.fp_Y[31];
+
+        exp_field_Z=item.fp_X[30:23]+item.fp_Y[30:23]-127;
 
         fracZ=item.fp_X[22:0]+(item.fp_X[22:0]*item.fp_Y[22:0])/8388608+item.fp_Y[22:0];
 
@@ -85,9 +87,10 @@ class scoreboard extends uvm_scoreboard;
                     end
                 endcase
                 
-        end
+            end
+
         else begin
-            nan=1;
+            nan_Z=1;
         end
 
 
@@ -96,10 +99,10 @@ class scoreboard extends uvm_scoreboard;
         over =(condition )? 1 : 0;
         nan  =(condition )? 1 : 0;
 
-        crrt_Z={item.fp_X[31]^item.fp_Y[31],item.fp_X[30:23]+item.fp_Y[30:23]-127
-        ,fraction}; 
+        crrt_Z={sign_field_Z,exp_field_Z,fract_field_Z}; 
 
         //////////////////////////////
+
 
         `uvm_info("SCBD", $sformatf("Mode=%0b Op_x=%0b Op_y=%0b Result=%0b Correct=%0b Overflow=%0b 
         Underflow=%0b", item.r_mode,item.fp_X,item.fp_Y,item.fp_Z,crrt_Z,item.ovrf,item.udrf), UVM_LOW)
@@ -109,12 +112,6 @@ class scoreboard extends uvm_scoreboard;
         end else begin
             `uvm_info("SCBD",$sformatf("PASS ! Result=%0b Correct=%0b",item.fp_Z,crrt_Z), UVM_HIGH)
         end
-
-        //UNDERFLOW
-
-        //OVERFLOW
-
-        //NAN 
 
     endfunction
 
