@@ -6,10 +6,13 @@ class scoreboard extends uvm_scoreboard;
     endfunction
 
     bit [31:0] crrt_Z;
-    bit [23:0] fraction;
+    bit [32:0] fract_Z_unR; // fracZ without rounding.
     bit und,over,nan;
-    real fracX,fracY,fracZ;
+    real fracZ; //fracZ as decimal point data
     
+    bit sign_field_Z;
+    bit [7:0] exp_field_Z;
+    bit [22:0] fract_field_Z;
 
     uvm_analysis_imp #(Item, scoreboard) m_analysis_imp;
 
@@ -23,38 +26,71 @@ class scoreboard extends uvm_scoreboard;
     virtual function write(Item item);
 
         ///////GOLDEN REFERENCE////////
+        
+        sign_field_Z=item.fp_X[31]^item.fp_Y[31];
 
         fracZ=item.fp_X[22:0]+(item.fp_X[22:0]*item.fp_Y[22:0])/8388608+item.fp_Y[22:0];
+
+        fract_Z_unR=fracZ*2; // shift the decimal point one time
+
         
-        if (fraction[-24]) begin  //It needs rounding
+        //Now fract_field_Z should have a lentght of 23 +1 but if it is greater then the result is NaN
 
-            case (item.r_mode)
-                3'b000:begin  //last bit 0
-                end
+        if (fract_Z_unR>=2**24) begin
 
-                3'b001:begin  //last bit doesnt change (truncate)
-                end
+            fract_field_Z=fract_Z_unR/2; //First the fraction field is truncated
+            
+            if (fract_Z_unR[0]) begin  //It needs rounding 
 
-                3'b010:begin  //last bit depends on the sign of the result
+                case (item.r_mode)
 
+                    3'b000:begin  //last bit 0
+                        
+                        if (fract_field_Z[0]) begin
+                            fract_field_Z+=1;
+                        end
 
-                end
+                    end
 
-                3'b011:begin  //last bit depends on the sign of the result
+                    3'b001:begin  //last bit doesnt change (truncate)
+                        
+                        //Nothing to do (already truncated)
 
+                    end
 
-                end
+                    3'b010:begin  //last bit depends on the sign of the result (Down)
+                        
+                        if (sign_field_Z) begin
+                            fract_field_Z+=1;
+                        end
 
-                3'b100:begin  //add 1 to the fraction field
+                    end
 
-                default: begin
-                    fraction=fraction[-1:-23]; //truncate the result
-                end
-            endcase
+                    3'b011:begin  //last bit depends on the sign of the result (Up)
 
-        end else begin
-            fraction= fraction[-1:-23];
+                        if (!sign_field_Z) begin
+                            fract_field_Z+=1;
+                        end
+
+                    end
+
+                    3'b100:begin  //add 1 to the fraction field
+
+                        fract_field_Z+=1;
+
+                    end
+
+                    default: begin
+                        //truncate the result (already truncated)
+                    end
+                endcase
+                
         end
+        else begin
+            nan=1;
+        end
+
+
 
         und  =( !(item.fp_X[30:23] || item.fp_Y[30:23]) && !(item.fp_X[22:0] || item.fp_Y[22:0]))? 1 : 0;
         over =(condition )? 1 : 0;
@@ -75,7 +111,9 @@ class scoreboard extends uvm_scoreboard;
         end
 
         //UNDERFLOW
+
         //OVERFLOW
+
         //NAN 
 
     endfunction
