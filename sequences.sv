@@ -43,61 +43,31 @@ class esp_seq extends uvm_sequence;
     super.new(name);
   endfunction
 
+  // Posibles valores de X y Y
+  bit [4] seq_values = {32'h0, 32'hFFFFFFFF, 32'h55555555, 32'hAAAAAAAA};
+
   virtual task body();
+    
+    foreach(seq_values[i]) begin
+      foreach(seq_values[j]) begin
+        Item item = Item::type_id::create("item");
+        
+        start_item(item);
+
+        // Se usa randomize para aleatorizar el modo de redondeo
+        if( !item.randomize() )
+          `uvm_error("SEQ", "Randomize failed")
+
+        item.fp_X = seq_values[i];
+        item.fp_Y = seq_values[j];
+
+        `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
       
-    // 0s
-    Item item = Item::type_id::create("item0");
+        finish_item(item);
+      end
+    end
 
-    start_item(item);
-
-    item.fp_X = 0;
-    item.fp_Y = 0;
-    item.r_mode = 0;
-    
-    `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
-    
-    finish_item(item);
-
-    // Fs
-    Item item = Item::type_id::create("itemF");
-
-    start_item(item);
-
-    item.fp_X = 32'hFFFFFFFF;
-    item.fp_Y = 32'hFFFFFFFF;
-    item.r_mode = 1;
-    
-    `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
-    
-    finish_item(item);
-
-    // 5s
-    Item item = Item::type_id::create("item5");
-
-    start_item(item);
-
-    item.fp_X = 32'h55555555;
-    item.fp_Y = 32'h55555555;
-    item.r_mode = 0;
-    
-    `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
-    
-    finish_item(item);
-
-    // As
-    Item item = Item::type_id::create("item5");
-
-    start_item(item);
-
-    item.fp_X = 32'hAAAAAAAA;
-    item.fp_Y = 32'hAAAAAAAA;
-    item.r_mode = 1;
-    
-    `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
-    
-    finish_item(item);
-
-    `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
+    `uvm_info("SEQ",$sformatf("Done generation of %0d items", 4),UVM_LOW);
   endtask
 
 endclass
