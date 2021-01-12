@@ -31,19 +31,21 @@ class scoreboard extends uvm_scoreboard;
 
         fract_field_X=item.fp_X[22:0];
 
+
         exp_field_Y=item.fp_Y[30:23];
 
         fract_field_Y=item.fp_Y[22:0];
+
         
         sign_field_Z=item.fp_X[31]^item.fp_Y[31];
 
         exp_field_Z=exp_field_X+exp_field_Y-127;
 
+
         fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y;
 
         fract_Z_unR=fracZ*2; // shift the decimal point one time
 
-        
         //Now fract_field_Z should have a lentght of 23 +1 but if it is greater then the result is NaN
 
         if (fract_Z_unR>=2**24) begin
@@ -93,7 +95,7 @@ class scoreboard extends uvm_scoreboard;
                     end
 
                     default: begin
-                        //truncate the result (already truncated)
+                        //truncate (already truncated)
                     end
                 endcase
                 
@@ -120,7 +122,6 @@ class scoreboard extends uvm_scoreboard;
         nan_X = &exp_field_X & |fract_field_X; //NaN definition
         nan_Y = &exp_field_Y & |fract_field_Y;
 
-
         nan_Z = {und_X & over_Y} | {over_X & und_Y} | nan_Z; //Infinity*0 or 0*Infinity
         nan_Z = nan_X | nan_Y | nan_Z; //Nan propagation
 
@@ -128,17 +129,16 @@ class scoreboard extends uvm_scoreboard;
             crrt_Z={sign_field_Z,8'b0,23'b0};  //correct result
         end 
         else if (over_Z) begin
-            crrt_Z={sign_field_Z,8'b11111111,23'b0};  //correct result
+            crrt_Z={sign_field_Z,8'hFF,23'b0};  //correct result
         end
         else if (nan_Z) begin
-            crrt_Z={sign_field_Z,8'b11111111,1,22'b0};  //correct result
+            crrt_Z={sign_field_Z,8'hFF,1,22'b0};  //correct result
         end
         else begin
             crrt_Z={sign_field_Z,exp_field_Z,fract_field_Z};  //correct result
         end
 
         //////////////////////////////
-
 
         `uvm_info("SCBD", $sformatf("Mode=%0b Op_x=%0b Op_y=%0b Result=%0b Correct=%0b Overflow=%0b 
         Underflow=%0b", item.r_mode,item.fp_X,item.fp_Y,item.fp_Z,crrt_Z,item.ovrf,item.udrf), UVM_LOW)
