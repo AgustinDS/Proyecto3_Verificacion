@@ -33,9 +33,9 @@ class scoreboard extends uvm_scoreboard;
 
         fract_field_X=item.fp_X[22:0];
 
-        exp_field_Y=
+        exp_field_Y=item.fp_Y[30:23];
 
-        fract_field_Y=
+        fract_field_Y=item.fp_Y[22:0];
         
         sign_field_Z=item.fp_X[31]^item.fp_Y[31];
 
