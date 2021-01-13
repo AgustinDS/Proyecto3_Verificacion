@@ -8,7 +8,7 @@ class scoreboard extends uvm_scoreboard;
     bit [31:0] crrt_Z;
     bit [32:0] fract_Z_unR; // fracZ without rounding.
     bit und_X,over_X,nan_X,und_Y,over_Y,nan_Y,und_Z,over_Z,nan_Z;
-    real fracZ; //fracZ as decimal point data
+    real expZ,fracZ; //fracZ as decimal point data
     
     bit sign_field_Z;
   	bit [7:0] exp_field_X, exp_field_Y, exp_field_Z;
@@ -40,13 +40,18 @@ class scoreboard extends uvm_scoreboard;
         
         sign_field_Z=item.fp_X[31]^item.fp_Y[31];
 
-        exp_field_Z=exp_field_X+exp_field_Y-127;
+        expZ=exp_field_X+exp_field_Y-127; //This value could be negative
+
+        fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y; //This value has decimal point
 
 
-        ((exp_X+exp_Z-127)==8'hFF)||( (&exp_X & ~|frc_X) && |exp_Y )||( (&exp_Y & ~|frc_Y) && |exp_X )
-
-        fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y;
-
+        if (expZ<=0) begin
+            exp_field_Z=8'b0;
+        end
+        else begin
+            exp_field_Z=expZ;
+        end
+        
         fract_Z_unR=fracZ*2; // shift the decimal point one time
 
         //Now fract_field_Z should have a lentght of 23 +1 but if it is greater then the result is NaN
@@ -112,8 +117,6 @@ class scoreboard extends uvm_scoreboard;
                 nan_Z=1;
             end 
         end
-
-        
 
 
         und_X  =!(|exp_field_X)?1 : 0; //If exp is 0 then underflow
