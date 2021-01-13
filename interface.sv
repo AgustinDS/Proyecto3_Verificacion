@@ -8,7 +8,7 @@ interface dut_if (input bit clk);
     default input #1step output #3ns;
         input fp_Z;  //Salida
         input ovrf;  // overflow
-        input udrf  //underflow
+        input udrf;  //underflow
         output r_mode;  //mode
         output fp_X; //A
         output fp_Y; //B
