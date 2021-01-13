@@ -1,6 +1,6 @@
 class Item extends uvm_sequence_item;
   `uvm_object_utils(Item)
-  rand bit [31:0]fp_X, fp_Y;
+  randc bit [31:0]fp_X, fp_Y;
   rand bit [2:0] r_mode;
   bit [31:0] fp_Z; 
   bit ovrf;
@@ -23,21 +23,14 @@ class Item extends uvm_sequence_item;
 
 
   constraint c_undrflw {
-    fp_X[30:23] + fp_Y[30:23] - 127 == 8'h0; 
+    (fp_X[30:23] + fp_Y[30:23] - 127 <= 0)|(~|fp_X[30:23])|(~|fp_Y[30:23]); 
   }
 
   constraint c_NaN {
     // Entradas NaN
     // Inf*0
     // 0*Inf
-
-    // Exponente
-    fp_X[30:23] <= 8'h8F;
-    fp_Y[30:23] <= 8'h8f;
-
-    // Fraccion
-    fp_X[22:0] <= 8'h8F;
-    fp_Y[22:0] <= 8'h8f;
+    (&fp_X[30:23] & ~|fp_X[22:0])|(&fp_Y[30:23] & ~|fp_Y[22:0])|((&fp_X[30:23] & ~|fp_X[22:0]) & ~|fp_Y[23:0])|((&fp_Y[30:23] & ~|fp_Y[22:0]) & ~|fp_X[23:0]);
   }
   
   virtual function string convert2str();
