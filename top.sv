@@ -5,12 +5,12 @@
 `include "multiplicador_32_bits_FP_IEEE.sv"
 `include "interface.sv"
 `include "sequence_item.sv"
-`include "sequence.sv"
+`include "sequences.sv"
 `include "monitor.sv"
 `include "driver.sv"
 `include "scoreboard.sv"
 `include "agent.sv"
-`include "environment.sv"
+`include "env.sv"
 `include "test.sv"
 
 module top_testbench;

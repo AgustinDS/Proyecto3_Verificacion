@@ -1,36 +1,36 @@
 class Item extends uvm_sequence_item;
   `uvm_object_utils(Item)
-  rand bit [31:0]fp_X, fp_Y;
+  randc bit [31:0]fp_X, fp_Y;
   rand bit [2:0] r_mode;
   bit [31:0] fp_Z; 
   bit ovrf;
   bit udrf;
 
-  rand bit sgn_X;
-  rand bit sgn_Y;
-
-  rand bit [7:0] exp_X;
-  rand bit [7:0] exp_Y;
-
-  rand bit [22:0] frac_X;
-  rand bit [22:0] frac_Y;
-
   // Constraints
   constraint c_rndm_item  {
-    exp_X <= 8'h8F;
-    exp_Y <= 8'h8f;
+    // Exponente
+    fp_X[30:23] <= 8'h8F;
+    fp_Y[30:23] <= 8'h8f;
+
+    // Fraccion
+    fp_X[22:0] <= 8'h8F;
+    fp_Y[22:0] <= 8'h8f;
   }
 
   constraint c_ovrflw {
-    //
+    ((fp_X[30:23]+fp_Y[30:23]-127)==8'hFF)|( (&fp_X[30:23] & ~|fp_X[22:0]) & |fp_Y[30:23] )|( (&fp_Y[30:23] & ~|fp_X[22:0]) & |fp_X[30:23] );
   }
 
+
   constraint c_undrflw {
-    
+    (fp_X[30:23] + fp_Y[30:23] - 127 <= 0)|(~|fp_X[30:23])|(~|fp_Y[30:23]); 
   }
 
   constraint c_NaN {
-    
+    // Entradas NaN
+    // Inf*0
+    // 0*Inf
+    (&fp_X[30:23] & ~|fp_X[22:0])|(&fp_Y[30:23] & ~|fp_Y[22:0])|((&fp_X[30:23] & ~|fp_X[22:0]) & ~|fp_Y[23:0])|((&fp_Y[30:23] & ~|fp_Y[22:0]) & ~|fp_X[23:0]);
   }
   
   virtual function string convert2str();
