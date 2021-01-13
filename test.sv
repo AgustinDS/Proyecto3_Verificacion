@@ -6,8 +6,8 @@ class base_test extends uvm_test;
   endfunction
   
   env e0;
-  gen_item_seq  seq;
-  virtual des_if  vif;
+  base_seq  seq;
+  virtual dut_if  vif;
 
   virtual function void build_phase(uvm_phase phase);
     
@@ -15,11 +15,11 @@ class base_test extends uvm_test;
 
     e0 = env::type_id::create("e0",this);
 
-    if(!uvm_config_db#(virtual des_if)::get(this, "", "des_vif",vif))
+    if(!uvm_config_db#(virtual dut_if)::get(this, "", "dut_vif",vif))
       `uvm_fatal("TEST","Did not get vif")
-    uvm_config_db#(virtual des_if)::set(this, "e0.a0.*","des_vif",vif);
+    uvm_config_db#(virtual dut_if)::set(this, "e0.a0.*","dut_vif",vif);
     
-    seq = gen_item_seq::type_id::create("seq");
+    seq = base_seq::type_id::create("seq");
     seq.randomize();
 
   endfunction
@@ -27,7 +27,7 @@ class base_test extends uvm_test;
   virtual task run_phase(uvm_phase phase);
 
     phase.raise_objection(this);
-    apply_reset();
+    // apply_reset();
     seq.start(e0.a0.s0);
     #200;
     phase.drop_objection(this);
@@ -45,9 +45,9 @@ class test_1011 extends base_test;
   endfunction
 
   virtual function void build_phase(uvm_phase phase);
-    pattern = 4'b1011;
+    
     super.build_phase(phase);
-    seq.randomize() with {num inside {[300:500]};};
+    
   endfunction
 
 endclass
