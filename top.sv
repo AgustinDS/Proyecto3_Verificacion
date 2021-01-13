@@ -32,8 +32,10 @@ module top_testbench;
 
 	initial begin
 		clk <= 0;
-		
+
 		`uvm_info("TOP", "Test start", UVM_LOW);
+
+		uvm_config_db#(virtual dut_if)::set(null,"uvm_test_top","des_vif",_if);
 
 		run_test();
 	end
