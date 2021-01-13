@@ -35,9 +35,9 @@ module top_testbench;
 
 		`uvm_info("TOP", "Test start", UVM_LOW);
 
-		uvm_config_db#(virtual dut_if)::set(null,"uvm_test_top","des_vif",_if);
+		uvm_config_db#(virtual dut_if)::set(null,"uvm_test_top","dut_vif",_if);
 
-		run_test();
+		run_test("base_test");
 	end
 	
 endmodule
