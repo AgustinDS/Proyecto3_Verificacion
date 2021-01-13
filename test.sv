@@ -34,13 +34,6 @@ class base_test extends uvm_test;
 
   endtask
 
-/*  virtual task apply_reset();
-    vif.rstn <= 0;
-    vif.in <= 0;
-    repeat(5) @(posedge vif.clk);
-    vif.rstn <=1;
-    repeat(10) @(posedge vif.clk);
-  endtask*/
   
 endclass
 

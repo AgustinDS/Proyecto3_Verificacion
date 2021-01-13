@@ -43,6 +43,8 @@ class scoreboard extends uvm_scoreboard;
         exp_field_Z=exp_field_X+exp_field_Y-127;
 
 
+        ((exp_X+exp_Z-127)==8'hFF)||( (&exp_X & ~|frc_X) && |exp_Y )||( (&exp_Y & ~|frc_Y) && |exp_X )
+
         fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y;
 
         fract_Z_unR=fracZ*2; // shift the decimal point one time
@@ -103,12 +105,15 @@ class scoreboard extends uvm_scoreboard;
             end
         end
         else begin
-            nan_Z=1;
+            if (exp_field_Z>=2**8) begin
+                exp_field_Z=8'b11111111;
+            end
+            else begin
+                nan_Z=1;
+            end 
         end
 
-        if (exp_field_Z>=2**8) begin
-            exp_field_Z=8'b11111111;
-        end
+        
 
 
         und_X  =!(|exp_field_X)?1 : 0; //If exp is 0 then underflow
@@ -125,6 +130,7 @@ class scoreboard extends uvm_scoreboard;
 
         nan_Z = {und_X & over_Y} | {over_X & und_Y} | nan_Z; //Infinity*0 or 0*Infinity
         nan_Z = nan_X | nan_Y | nan_Z; //Nan propagation
+
 
         if (und_Z) begin
             crrt_Z={sign_field_Z,8'b0,23'b0};  //correct result
