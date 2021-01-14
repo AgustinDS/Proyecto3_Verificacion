@@ -51,7 +51,9 @@ class esp_seq extends uvm_sequence;
   endfunction
 
   // Posibles valores de X y Y
-  bit [31:0][4] seq_values = {32'h0, 32'hFFFFFFFF, 32'h55555555, 32'hAAAAAAAA};
+  bit [31:0] seq_values[4] = {32'h0, 32'hFFFFFFFF, 32'h55555555, 32'hAAAAAAAA};
+
+  int n = 0;
 
   virtual task body();
     
@@ -75,13 +77,15 @@ class esp_seq extends uvm_sequence;
         item.fp_X = seq_values[i];
         item.fp_Y = seq_values[j];
 
+        n++;
+
         `uvm_info("SEQ",$sformatf("New item: %s", item.convert2str()), UVM_HIGH);
       
         finish_item(item);
       end
     end
 
-    `uvm_info("SEQ",$sformatf("Done generation of %0d items", 4),UVM_LOW);
+    `uvm_info("SEQ",$sformatf("Done generation of %0d items", n), UVM_LOW);
   endtask
 
 endclass
