@@ -20,6 +20,7 @@ class base_seq extends uvm_sequence;
 
       // Configuración de constraints
       item.c_rndm_item.constraint_mode(1);
+      item.c_r_mode(1);
       item.c_ovrflw.constraint_mode(0);
       item.c_undrflw.constraint_mode(0);
       item.c_NaN.constraint_mode(0);

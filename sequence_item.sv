@@ -15,7 +15,10 @@ class Item extends uvm_sequence_item;
     // Fraccion
     //fp_X[22:0] <= 23'h8F;
     //fp_Y[22:0] <= 23'h8F;
+
   }
+
+  constraint c_r_mode {r_mode<=3'b100;}
 
   constraint c_ovrflw {
     ((fp_X[30:23]+fp_Y[30:23]-127)==8'hFF)|( (&fp_X[30:23] & ~|fp_X[22:0]) & |fp_Y[30:23] )|( (&fp_Y[30:23] & ~|fp_X[22:0]) & |fp_X[30:23] );
