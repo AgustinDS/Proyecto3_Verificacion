@@ -9,12 +9,12 @@ class Item extends uvm_sequence_item;
   // Constraints
   constraint c_rndm_item  {
     // Exponente
-    fp_X[30:23] <= 8'h8F;
-    fp_Y[30:23] <= 8'h8f;
+    fp_X[30:23] <= 8'hFE;
+    fp_Y[30:23] <= 8'hFE;
 
     // Fraccion
-    fp_X[22:0] <= 8'h8F;
-    fp_Y[22:0] <= 8'h8f;
+    //fp_X[22:0] <= 23'h8F;
+    //fp_Y[22:0] <= 23'h8F;
   }
 
   constraint c_ovrflw {

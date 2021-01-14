@@ -44,8 +44,9 @@ class scoreboard extends uvm_scoreboard;
 
         fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y; //This value has decimal point
 
+      $display("expz %g ",$rtoi(expZ));
 
-        if (expZ<=0) begin
+      	if ($rtoi(expZ)<=0) begin
             exp_field_Z=8'b0;
         end
         else begin
@@ -110,6 +111,7 @@ class scoreboard extends uvm_scoreboard;
             end
         end
         else begin
+          	$display("Exp_z %g",exp_field_Z);
             if (exp_field_Z>=2**8) begin
                 exp_field_Z=8'b11111111;
             end
@@ -161,4 +163,3 @@ class scoreboard extends uvm_scoreboard;
     endfunction
 
 endclass
-
