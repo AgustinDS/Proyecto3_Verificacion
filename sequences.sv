@@ -51,7 +51,7 @@ class esp_seq extends uvm_sequence;
   endfunction
 
   // Posibles valores de X y Y
-  bit [4] seq_values = {32'h0, 32'hFFFFFFFF, 32'h55555555, 32'hAAAAAAAA};
+  bit [31:0][4] seq_values = {32'h0, 32'hFFFFFFFF, 32'h55555555, 32'hAAAAAAAA};
 
   virtual task body();
     
@@ -60,6 +60,13 @@ class esp_seq extends uvm_sequence;
         Item item = Item::type_id::create("item");
         
         start_item(item);
+
+        // Configuración de constraints
+        item.c_rndm_item.constraint_mode(0);
+        item.c_r_mode.constraint_mode(0);
+        item.c_ovrflw.constraint_mode(0);
+        item.c_undrflw.constraint_mode(0);
+        item.c_NaN.constraint_mode(0);
 
         // Se usa randomize para aleatorizar el modo de redondeo
         if( !item.randomize() )
@@ -99,6 +106,8 @@ class seq_ovrflw extends uvm_sequence;
       Item item = Item::type_id::create("item");
 
       // Configuración de constraints
+      item.c_r_mode.constraint_mode(1);
+
       item.c_rndm_item.constraint_mode(0);
       item.c_ovrflw.constraint_mode(1);
       item.c_undrflw.constraint_mode(0);
@@ -140,6 +149,8 @@ class seq_undrflw extends uvm_sequence;
       Item item = Item::type_id::create("item");
 
       // Configuración de constraints
+      item.c_r_mode.constraint_mode(1);
+
       item.c_rndm_item.constraint_mode(0);
       item.c_ovrflw.constraint_mode(0);
       item.c_undrflw.constraint_mode(1);
@@ -180,6 +191,8 @@ class seq_NaN extends uvm_sequence;
       Item item = Item::type_id::create("item");
 
       // Configuración de constraints
+      item.c_r_mode.constraint_mode(1);
+
       item.c_rndm_item.constraint_mode(0);
       item.c_ovrflw.constraint_mode(0);
       item.c_undrflw.constraint_mode(0);
