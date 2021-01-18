@@ -49,5 +49,15 @@ class test_1011 extends base_test;
     super.build_phase(phase);
     
   endfunction
+  /*
+  virtual task run_phase(uvm_phase phase);
 
+    phase.raise_objection(this);
+    // apply_reset();
+    seq.start(e0.a0.s0);
+    #200;
+    phase.drop_objection(this);
+
+  endtask
+  */
 endclass

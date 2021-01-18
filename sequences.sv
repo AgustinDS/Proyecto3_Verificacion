@@ -216,3 +216,25 @@ class seq_NaN extends uvm_sequence;
     `uvm_info("SEQ",$sformatf("Done generation of %0d items", n),UVM_LOW);
   endtask
 endclass
+
+class seq_esc1 extends  uvm_sequence;
+  // Escenario 1, dos tipos de secuencias:
+  // Aleatorio
+  // Alternancia
+
+  `uvm_object_utils(seq_esc1);
+  
+  function new(string name="seq_esc1");
+    super.new(name);
+  endfunction
+
+  base_seq seq_aleat;
+  esp_seq seq_alt;
+
+  task body();
+    `uvm_do(seq_aleat);
+    `uvm_do(seq_alt);  
+  endtask : body
+
+
+endclass : seq_esc1
