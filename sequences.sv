@@ -240,3 +240,28 @@ class seq_esc1 extends  uvm_sequence;
 
 
 endclass : seq_esc1
+
+class seq_esc2 extends  uvm_sequence;
+  // Escenario 2, tres tipos de secuencias:
+  // Overflow
+  // Underflow
+  // NaN
+
+  `uvm_object_utils(seq_esc2);
+  
+  function new(string name="seq_esc2");
+    super.new(name);
+  endfunction
+
+  seq_ovrflw uf_seq;
+  seq_undrflw of_seq;
+  seq_NaN NaN_seq;
+
+  task body();
+    `uvm_do(of_seq);
+    `uvm_do(uf_seq);
+    `uvm_do(NaN_seq)
+  endtask : body
+
+
+endclass : seq_esc2
