@@ -37,7 +37,7 @@ module top_testbench;
 
 		uvm_config_db#(virtual dut_if)::set(null,"uvm_test_top","dut_vif",_if);
 
-		run_test("test_01");
+		run_test("UVM_TESTNAME");
 	end
 	
 endmodule

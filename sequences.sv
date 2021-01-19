@@ -14,6 +14,7 @@ class base_seq extends uvm_sequence;
   constraint c_n {soft n inside {[5:10]};}
 
   virtual task body();
+    `uvm_info("SEQ", "Start of basic random sequence", UVM_HIGH)
     for(int i = 0; i < n; i++)begin
       
       Item item = Item::type_id::create("item");
@@ -56,7 +57,7 @@ class esp_seq extends uvm_sequence;
   int n = 0;
 
   virtual task body();
-    
+    `uvm_info("SEQ", "Start of basic specific sequence", UVM_HIGH)
     foreach(seq_values[i]) begin
       foreach(seq_values[j]) begin
         Item item = Item::type_id::create("item");
@@ -253,14 +254,14 @@ class seq_esc2 extends  uvm_sequence;
     super.new(name);
   endfunction
 
-  seq_ovrflw uf_seq;
-  seq_undrflw of_seq;
+  seq_ovrflw of_seq;
+  seq_undrflw uf_seq;
   seq_NaN NaN_seq;
 
   task body();
     `uvm_do(of_seq);
     `uvm_do(uf_seq);
-    `uvm_do(NaN_seq)
+    `uvm_do(NaN_seq);
   endtask : body
 
 

@@ -59,37 +59,43 @@ class test_01 extends base_test;
   virtual task run_phase(uvm_phase phase);
 
     `uvm_info("TEST_01", "Starting test execution", UVM_HIGH)
-    super.run_phase(phase);
+    phase.raise_objection(this);
+    seq.start(e0.a0.s0);
+    #200;
+    phase.drop_objection(this);
 
   endtask
 
 endclass
 
-// class test_10 extends  base_test;
+class test_10 extends  base_test;
 // Test del escenario 2: Comportamiento del DUT en casos de error
 // Se generan secuencias que causen overflow, underflow y NaN
 
-//   `uvm_component_utils(base_test)
+  `uvm_component_utils(test_10)
   
-//   function new(string name = "base_test",uvm_component parent=null);
-//     super.new(name,parent);
-//   endfunction
+  function new(string name = "test_10",uvm_component parent=null);
+    super.new(name,parent);
+  endfunction
   
-//   seq_esc2 seq;
+  seq_esc2 seq;
 
-//   virtual function void build_phase(uvm_phase phase);
+  virtual function void build_phase(uvm_phase phase);
     
-//     super.build_phase(phase);
+    super.build_phase(phase);
 
-//     seq = seq_esc2::type_id::create("seq");
-//     seq.randomize();
-//   endfunction
+    seq = seq_esc2::type_id::create("seq");
+    seq.randomize();
+  endfunction
 
-//   virtual task run_phase(uvm_phase phase);
+  virtual task run_phase(uvm_phase phase);
 
-//     `uvm_info("TEST_10", "Starting test execution", UVM_HIGH)
-//     super.run_phase(phase);
+    `uvm_info("TEST_10", "Starting test execution", UVM_HIGH)
+    phase.raise_objection(this);
+    seq.start(e0.a0.s0);
+    #200;
+    phase.drop_objection(this);
 
-//   endtask
+  endtask
 
-// endclass : test_10
+endclass : test_10
