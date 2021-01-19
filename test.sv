@@ -56,15 +56,4 @@ class test_01 extends base_test;
     seq.randomize();
   endfunction
 
-  virtual task run_phase(uvm_phase phase);
-
-    phase.raise_objection(this);
-    // apply_reset();
-    `uvm_info("TEST", "Inicio de secuencia", UVM_HIGH)
-    seq.start(e0.a0.s0);
-    #200;
-    phase.drop_objection(this);
-
-  endtask
-
 endclass
