@@ -232,8 +232,10 @@ class seq_esc1 extends  uvm_sequence;
   esp_seq seq_alt;
 
   task body();
+    `uvm_do(seq_alt);
+    `uvm_info("SEQ", "Done specific subsequence", UVM_HIGH);
     `uvm_do(seq_aleat);
-    `uvm_do(seq_alt);  
+    `uvm_info("SEQ", "Done random subsequence", UVM_HIGH);
   endtask : body
 
 

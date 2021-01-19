@@ -37,27 +37,34 @@ class base_test extends uvm_test;
   
 endclass
 
-class test_1011 extends base_test;
-  `uvm_component_utils(test_1011)
+class test_01 extends base_test;
+  `uvm_component_utils(test_01)
   
-  function new(string name="test_1011",uvm_component parent=null);
+  function new(string name="test_01",uvm_component parent=null);
     super.new(name,parent);
   endfunction
+
+  //env e0;
+  seq_esc1 seq;
+  //virtual dut_if  vif;
 
   virtual function void build_phase(uvm_phase phase);
     
     super.build_phase(phase);
-    
+
+    seq = seq_esc1::type_id::create("seq");
+    seq.randomize();
   endfunction
-  /*
+
   virtual task run_phase(uvm_phase phase);
 
     phase.raise_objection(this);
     // apply_reset();
+    `uvm_info("TEST", "Inicio de secuencia", UVM_HIGH)
     seq.start(e0.a0.s0);
     #200;
     phase.drop_objection(this);
 
   endtask
-  */
+
 endclass
