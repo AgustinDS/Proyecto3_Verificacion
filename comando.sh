@@ -3,6 +3,8 @@ rm -rfv `ls |grep -v ".*\.sv\|.*\.sh\|.*\.md"`;
 
 vcs -Mupdate top.sv  -o salida -full64 -debug_all -sverilog -l log_test -ntb_opts uvm-1.2 +lint=TFIPC-L -cm line+tgl+cond+fsm+branch+assert -cm_tgl assign+portsonly+fullintf+mda+count+structarr -lca;
 
+echo 'Muestra, fp_X, fp_Y, fp_Z (Recibido), fp_Z (Checker), Modo de redondeo, Overflow, Underflow' > sb_transaction_report.csv
+
 ./salida -cm line+tgl+cond+fsm+branch+assert +UVM_VERBOSITY=UVM_HIGH +UVM_TESTNAME=test_10 +ntb_random_seed=1 > debug_log
 
 # echo "[COMANDO] Escenario 1: Uso común del dispositivo" > deleteme_log_1
