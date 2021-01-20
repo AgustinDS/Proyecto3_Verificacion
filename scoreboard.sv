@@ -12,7 +12,7 @@ class scoreboard extends uvm_scoreboard;
     real expZ,fracZ,de_fracZ; //fracZ as decimal point data
     
     bit sign_field_Z;
-  	bit [7:0] exp_field_X, exp_field_Y, exp_field_Z;
+    bit [7:0] exp_field_X, exp_field_Y, exp_field_Z;
   	bit [22:0] fract_field_X, fract_field_Y, r_fract_field_Z;
   	bit [24:0] fract_field_Z;
 
@@ -62,12 +62,7 @@ class scoreboard extends uvm_scoreboard;
 
       	expZ=expZ+n-23;
       
-        if ($rtoi(expZ)<=0) begin
-            exp_field_Z=8'b0;
-        end
-        else begin
-            exp_field_Z=expZ;
-        end
+
         
       	$display("n %g",n);
       fract_Z_unR=fracZ*(2**(32-n));
@@ -135,17 +130,25 @@ class scoreboard extends uvm_scoreboard;
         
       	if (fract_field_Z[24]) begin
            r_fract_field_Z=fract_field_Z[23:1];
+          	expZ+=1; 
     		
         end else begin
            r_fract_field_Z=fract_field_Z[22:0];
         end
       	
       $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
-        
-      
-        if (exp_field_Z>=255) begin
+       
+      if ($rtoi(expZ)<=0) begin
+            exp_field_Z=8'b0;
+      end 
+      else if ($rtoi(expZ)>=255) begin
             exp_field_Z=8'b11111111;
-        end
+      end
+      else begin
+           exp_field_Z=expZ;
+      end
+      
+      
 
 
         und_X  =!(|exp_field_X)?1 : 0; //If exp is 0 then underflow
