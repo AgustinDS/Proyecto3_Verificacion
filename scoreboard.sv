@@ -124,9 +124,8 @@ class scoreboard extends uvm_scoreboard;
         end 
         
       	if (fract_field_Z[24]) begin
-           r_fract_field_Z=fract_field_Z[23:1];
-          	expZ+=1; 
-    		
+            r_fract_field_Z=fract_field_Z[23:1];
+            expZ+=1; 
         end else begin
            r_fract_field_Z=fract_field_Z[22:0];
         end
@@ -134,13 +133,13 @@ class scoreboard extends uvm_scoreboard;
         $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
        
         if ($rtoi(expZ)<=0) begin
-                exp_field_Z=8'b0;
+            exp_field_Z=8'b0; //Underflow
         end 
         else if ($rtoi(expZ)>=255) begin
-                exp_field_Z=8'b11111111;
+            exp_field_Z=8'b11111111; //Overflow
         end
         else begin
-            exp_field_Z=expZ;
+            exp_field_Z=expZ; //Normal
         end
       
       
