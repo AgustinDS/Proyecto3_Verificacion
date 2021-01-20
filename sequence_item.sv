@@ -1,6 +1,6 @@
 class Item extends uvm_sequence_item;
   `uvm_object_utils(Item)
-  randc bit [31:0]fp_X, fp_Y;
+  rand bit [31:0]fp_X, fp_Y;
   rand bit [2:0] r_mode;
   bit [31:0] fp_Z; 
   bit ovrf;
@@ -23,7 +23,6 @@ class Item extends uvm_sequence_item;
   constraint c_ovrflw {
     ((fp_X[30:23]+fp_Y[30:23]-127)==8'hFF)|( (&fp_X[30:23] & ~|fp_X[22:0]) & |fp_Y[30:23] )|( (&fp_Y[30:23] & ~|fp_X[22:0]) & |fp_X[30:23] );
   }
-
 
   constraint c_undrflw {
     (fp_X[30:23] + fp_Y[30:23] - 127 <= 0)|(~|fp_X[30:23])|(~|fp_Y[30:23]); 

@@ -1,3 +1,13 @@
+// Curso: EL-5811 Verificación Funcional de Circuitos integrados
+// Tecnologico de Costa Rica (www.tec.ac.cr)
+// Ptroyecto 3: Test de un multiplicador de punto flotante
+// Profesor: Ronny García Ramírez 
+// Desarrolladores:
+// Felipe Josue Rojas-Barrantes (fjrojas.cr@gmail.com)
+// José Agustín Delgado-Sancho (ahusjads@gmail.com)
+// Luis Alonso Vega-Badilla (alonso9v9@gmail.com)
+// Este script esta estructurado en System Verilog
+
 //`timescale 1ns / 1ps
 
 `include "uvm_macros.svh"
