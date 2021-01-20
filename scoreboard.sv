@@ -187,7 +187,12 @@ class scoreboard extends uvm_scoreboard;
             `uvm_info("SCBD",$sformatf("PASS ! Result=%b Correct=%b",item.fp_Z,crrt_Z), UVM_HIGH)
         end
 
+        newRowOut(item, crrt_Z);
+
     endfunction
 
+    virtual function void newRowOut(const ref Item item, bit [31:0] crrt_Z);
+        $system($sformatf("echo '%b, %b, %b, %b, %b, %b, %b' >> sb_transaction_report.csv", item.fp_X, item.fp_Y, item.fp_Z, crrt_Z, item.r_mode, item.ovrf, item.udrf));
+    endfunction
 endclass
 
