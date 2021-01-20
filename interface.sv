@@ -12,6 +12,23 @@ interface dut_if (input bit clk);
         output r_mode;  //mode
         output fp_X; //A
         output fp_Y; //B
-     endclocking 
-     
+  endclocking 
+
+
+  property und;
+    @(posedge clk) $rose(~|fp_Z[30:23]) |-> ##[0:1] $rose (udrf);
+  endproperty
+
+  property ovr;
+    @(posedge clk) $rose(&fp_Z[30:23]) |-> ##[0:1] $rose (ovrf);
+  endproperty
+
+   a_und: assert property (und) else $display("Underflow Flag Error");
+   c_und: cover property (und) $display("Underflow Flag Pass");
+
+
+   a_ovr: assert property (ovr) else $display("Overflow Flag Error");
+   c_ovr: cover property (ovr) $display("Overflow Flag Pass");
+
+
 endinterface
