@@ -6,13 +6,15 @@ class scoreboard extends uvm_scoreboard;
     endfunction
 
     bit [31:0] crrt_Z;
+    int n;
     bit [32:0] fract_Z_unR; // fracZ without rounding.
     bit und_X,over_X,nan_X,und_Y,over_Y,nan_Y,und_Z,over_Z,nan_Z;
-    real expZ,fracZ; //fracZ as decimal point data
+    real expZ,fracZ,de_fracZ; //fracZ as decimal point data
     
     bit sign_field_Z;
   	bit [7:0] exp_field_X, exp_field_Y, exp_field_Z;
-  	bit [22:0] fract_field_X, fract_field_Y, fract_field_Z;
+  	bit [22:0] fract_field_X, fract_field_Y, r_fract_field_Z;
+  	bit [24:0] fract_field_Z;
 
     uvm_analysis_imp #(Item, scoreboard) m_analysis_imp;
 
@@ -28,6 +30,8 @@ class scoreboard extends uvm_scoreboard;
 
         ///////GOLDEN REFERENCE////////
 
+        nan_Z=0;
+
         exp_field_X=item.fp_X[30:23];
 
         fract_field_X=item.fp_X[22:0];
@@ -42,82 +46,105 @@ class scoreboard extends uvm_scoreboard;
 
         expZ=exp_field_X+exp_field_Y-127; //This value could be negative
 
-        fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y+8388608; //This value has decimal point
+        fracZ=fract_field_X+(($itor(fract_field_X))*($itor(fract_field_Y)))/8388608+fract_field_Y+8388608; //This value has decimal point
+        
 
-      $display("expz %g ",$rtoi(expZ));
+        fract_Z_unR=fracZ;
 
-      	if ($rtoi(expZ)<=0) begin
+        de_fracZ=(fracZ-$itor(fract_Z_unR)); //decimal part of the exact value 
+		
+        for (int i=32; i>=0; --i) begin  
+            if (fract_Z_unR[i]) begin
+                n=i;
+                break;
+            end
+        end
+
+      	expZ=expZ+n-23;
+      
+        if ($rtoi(expZ)<=0) begin
             exp_field_Z=8'b0;
         end
         else begin
             exp_field_Z=expZ;
         end
         
-        fract_Z_unR=fracZ*2; // shift the decimal point one time
+      	$display("n %g",n);
+        fract_Z_unR=fracZ*(2**(32-n));
 
-        //Now fract_field_Z should have a lentght of 23 +1 but if it is greater then the result is NaN
+        
 
-        if (fract_Z_unR>=2**24) begin
-            
-            nan_Z=0;
+        // This is the amount of bits of the fract
 
-            fract_field_Z=fract_Z_unR/2; //First the fraction field is truncated
-            
-            if (fract_Z_unR[0]) begin  //It needs rounding 
+        
+        fract_field_Z=fract_Z_unR[32:9];//first the result is truncated
+      
+        $display("Same bits %b %b %b %f",fract_Z_unR,fracZ,fract_field_Z,de_fracZ);
 
-                case (item.r_mode)
+        if (de_fracZ!=0) begin  //It needs rounding because it isn't a exact result
+            $display("Rounding...");
+            case (item.r_mode)
 
-                    3'b000:begin  //last bit 0
-                        
-                        if (fract_field_Z[0]) begin
+                3'b000:begin  //last bit 0
+                    
+                    if (fract_Z_unR[9]) begin
+                        if (fract_Z_unR[8:0]!=0) begin
                             fract_field_Z+=1;
+                        end else begin
+                            if (fract_Z_unR[10]) begin
+                                fract_field_Z+=1;
+                            end
                         end
-
                     end
+                end
 
-                    3'b001:begin  //last bit doesnt change (truncate)
-                        
-                        //Nothing to do (already truncated)
+                3'b001:begin  //last bit doesnt change (truncate)
+                    
+                    //Nothing to do (already truncated)
 
-                    end
+                end
 
-                    3'b010:begin  //last bit depends on the sign of the result (Down)
-                        
-                        if (sign_field_Z) begin
-                            fract_field_Z+=1;
-                        end
-
-                    end
-
-                    3'b011:begin  //last bit depends on the sign of the result (Up)
-
-                        if (!sign_field_Z) begin
-                            fract_field_Z+=1;
-                        end
-
-                    end
-
-                    3'b100:begin  //add 1 to the fraction field
-
+                3'b010:begin  //last bit depends on the sign of the result (Down)
+                    
+                    if (sign_field_Z) begin
                         fract_field_Z+=1;
-
                     end
 
-                    default: begin
-                        //truncate (already truncated)
+                end
+
+                3'b011:begin  //last bit depends on the sign of the result (Up)
+
+                    if (!sign_field_Z) begin
+                        fract_field_Z+=1;
                     end
-                endcase
-                
-            end
+
+                end
+
+                3'b100:begin  //add 1 to the fraction field
+                    if (fract_Z_unR[9]) begin
+                        fract_field_Z+=1;
+                    end
+                end
+
+                default: begin
+                    //truncate (already truncated)
+                end
+            endcase
+            
+        end 
+        
+      	if (fract_field_Z[24]) begin
+           r_fract_field_Z=fract_field_Z[23:1];
+    		
+        end else begin
+           r_fract_field_Z=fract_field_Z[22:0];
         end
-        else begin
-          	$display("Exp_z %g",exp_field_Z);
-            if (exp_field_Z>=2**8) begin
-                exp_field_Z=8'b11111111;
-            end
-            else begin
-                nan_Z=1;
-            end 
+      	
+        $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
+        
+      
+        if (exp_field_Z>=2**8) begin
+            exp_field_Z=8'b11111111;
         end
 
 
@@ -147,7 +174,7 @@ class scoreboard extends uvm_scoreboard;
             crrt_Z={sign_field_Z,8'hFF,1'b1,22'b0};  //correct result
         end
         else begin
-            crrt_Z={sign_field_Z,exp_field_Z,fract_field_Z};  //correct result
+            crrt_Z={sign_field_Z,exp_field_Z,r_fract_field_Z};  //correct result
         end
 
         //////////////////////////////
@@ -155,11 +182,12 @@ class scoreboard extends uvm_scoreboard;
         `uvm_info("SCBD", $sformatf("Mode=%b Op_x=%b Op_y=%b Result=%b Correct=%b Overflow=%b Underflow=%b", item.r_mode,item.fp_X,item.fp_Y,item.fp_Z,crrt_Z,item.ovrf,item.udrf), UVM_LOW)
         
         if(item.fp_Z !=crrt_Z ) begin
-            `uvm_error("SCBD",$sformatf("ERROR ! Result=%0b Correct=%0b", item.fp_Z,crrt_Z))
+            `uvm_error("SCBD",$sformatf("ERROR ! Result=%b Correct=%b", item.fp_Z,crrt_Z))
         end else begin
-            `uvm_info("SCBD",$sformatf("PASS ! Result=%0b Correct=%0b",item.fp_Z,crrt_Z), UVM_HIGH)
+            `uvm_info("SCBD",$sformatf("PASS ! Result=%b Correct=%b",item.fp_Z,crrt_Z), UVM_HIGH)
         end
 
     endfunction
 
 endclass
+
