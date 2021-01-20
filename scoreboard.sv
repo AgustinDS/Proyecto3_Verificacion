@@ -111,7 +111,7 @@ class scoreboard extends uvm_scoreboard;
                 end
 
                 3'b100:begin  //add 1 to the fraction field
-                    if (fract_Z_unR[9]) begin
+                    if (fract_Z_unR[8]) begin
                         fract_field_Z+=1;
                     end
                 end
