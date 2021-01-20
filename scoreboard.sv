@@ -51,9 +51,9 @@ class scoreboard extends uvm_scoreboard;
         
         fract_Z_unR=fracZ;
 
-       de_fracZ=(fracZ-$itor(fract_Z_unR)); //decimal part of the exact value 
+        de_fracZ=(fracZ-$itor(fract_Z_unR)); //decimal part of the exact value 
 		
-      for (int i=32; i>=0; --i) begin  
+        for (int i=32; i>=0; --i) begin  
             if (fract_Z_unR[i]) begin
                 n=i;
                 break;
@@ -61,23 +61,18 @@ class scoreboard extends uvm_scoreboard;
         end
 
       	expZ=expZ+n-23;
-      
-
-        
+           
       	$display("n %g",n);
-      fract_Z_unR=fracZ*(2**(32-n));
+        fract_Z_unR=fracZ*(2**(32-n));
 
-        
-
-     // This is the amount of bits of the fract
-
-        
-      fract_field_Z=fract_Z_unR[32:9];//first the result is truncated
+        // This is the amount of bits of the fract
+     
+        fract_field_Z=fract_Z_unR[32:9];//first the result is truncated
       
-      $display("Same bits %b %b %b %f",fract_Z_unR,fracZ,fract_field_Z,de_fracZ);
+        $display("Same bits %b %b %b %f",fract_Z_unR,fracZ,fract_field_Z,de_fracZ);
 
-      if (de_fracZ!=0) begin  //It needs rounding because it isn't a exact result
-        $display("Rounding...");
+        if (de_fracZ!=0) begin  //It needs rounding because it isn't a exact result
+            $display("Rounding...");
             case (item.r_mode)
 
                 3'b000:begin  //last bit 0
@@ -136,17 +131,17 @@ class scoreboard extends uvm_scoreboard;
            r_fract_field_Z=fract_field_Z[22:0];
         end
       	
-      $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
+        $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
        
-      if ($rtoi(expZ)<=0) begin
-            exp_field_Z=8'b0;
-      end 
-      else if ($rtoi(expZ)>=255) begin
-            exp_field_Z=8'b11111111;
-      end
-      else begin
-           exp_field_Z=expZ;
-      end
+        if ($rtoi(expZ)<=0) begin
+                exp_field_Z=8'b0;
+        end 
+        else if ($rtoi(expZ)>=255) begin
+                exp_field_Z=8'b11111111;
+        end
+        else begin
+            exp_field_Z=expZ;
+        end
       
       
 
