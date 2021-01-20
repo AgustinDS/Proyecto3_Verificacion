@@ -48,12 +48,12 @@ class scoreboard extends uvm_scoreboard;
 
         fracZ=fract_field_X+(($itor(fract_field_X))*($itor(fract_field_Y)))/8388608+fract_field_Y+8388608; //This value has decimal point
         
-
+        
         fract_Z_unR=fracZ;
 
-        de_fracZ=(fracZ-$itor(fract_Z_unR)); //decimal part of the exact value 
+       de_fracZ=(fracZ-$itor(fract_Z_unR)); //decimal part of the exact value 
 		
-        for (int i=32; i>=0; --i) begin  
+      for (int i=32; i>=0; --i) begin  
             if (fract_Z_unR[i]) begin
                 n=i;
                 break;
@@ -70,25 +70,25 @@ class scoreboard extends uvm_scoreboard;
         end
         
       	$display("n %g",n);
-        fract_Z_unR=fracZ*(2**(32-n));
+      fract_Z_unR=fracZ*(2**(32-n));
 
         
 
-        // This is the amount of bits of the fract
+     // This is the amount of bits of the fract
 
         
-        fract_field_Z=fract_Z_unR[32:9];//first the result is truncated
+      fract_field_Z=fract_Z_unR[32:9];//first the result is truncated
       
-        $display("Same bits %b %b %b %f",fract_Z_unR,fracZ,fract_field_Z,de_fracZ);
+      $display("Same bits %b %b %b %f",fract_Z_unR,fracZ,fract_field_Z,de_fracZ);
 
-        if (de_fracZ!=0) begin  //It needs rounding because it isn't a exact result
-            $display("Rounding...");
+      if (de_fracZ!=0) begin  //It needs rounding because it isn't a exact result
+        $display("Rounding...");
             case (item.r_mode)
 
                 3'b000:begin  //last bit 0
                     
-                    if (fract_Z_unR[9]) begin
-                        if (fract_Z_unR[8:0]!=0) begin
+                  	if (fract_Z_unR[8]) begin
+                      	if (fract_Z_unR[7:0]!=0) begin
                             fract_field_Z+=1;
                         end else begin
                             if (fract_Z_unR[10]) begin
@@ -140,7 +140,7 @@ class scoreboard extends uvm_scoreboard;
            r_fract_field_Z=fract_field_Z[22:0];
         end
       	
-        $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
+      $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
         
       
         if (exp_field_Z>=2**8) begin
