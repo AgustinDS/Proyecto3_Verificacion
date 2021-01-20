@@ -42,7 +42,7 @@ class scoreboard extends uvm_scoreboard;
 
         expZ=exp_field_X+exp_field_Y-127; //This value could be negative
 
-        fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y; //This value has decimal point
+        fracZ=fract_field_X+(fract_field_X*fract_field_Y)/8388608+fract_field_Y+8388608; //This value has decimal point
 
       $display("expz %g ",$rtoi(expZ));
 
