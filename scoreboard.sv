@@ -165,14 +165,14 @@ class scoreboard extends uvm_scoreboard;
         nan_Z = nan_X | nan_Y | nan_Z; //Nan propagation
 
 
-        if (und_Z) begin
+        if (nan_Z) begin
+            crrt_Z={sign_field_Z,8'hFF,1'b1,22'b0};  //correct result
+        end 
+        else if (und_Z) begin
             crrt_Z={sign_field_Z,8'b0,23'b0};  //correct result
         end 
         else if (over_Z) begin
             crrt_Z={sign_field_Z,8'hFF,23'b0};  //correct result
-        end
-        else if (nan_Z) begin
-            crrt_Z={sign_field_Z,8'hFF,1'b1,22'b0};  //correct result
         end
         else begin
             crrt_Z={sign_field_Z,exp_field_Z,r_fract_field_Z};  //correct result
