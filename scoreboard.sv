@@ -143,7 +143,7 @@ class scoreboard extends uvm_scoreboard;
       $display("Fract z field %b %b",fract_field_Z,r_fract_field_Z);
         
       
-        if (exp_field_Z>=2**8) begin
+        if (exp_field_Z>=255) begin
             exp_field_Z=8'b11111111;
         end
 
