@@ -182,8 +182,10 @@ class scoreboard extends uvm_scoreboard;
         
         if(item.fp_Z !=crrt_Z ) begin
             `uvm_error("SCBD",$sformatf("ERROR ! Result=%b Correct=%b", item.fp_Z,crrt_Z))
+            newRowOut_e(item, crrt_Z);
         end else begin
             `uvm_info("SCBD",$sformatf("PASS ! Result=%b Correct=%b",item.fp_Z,crrt_Z), UVM_HIGH)
+            newRowOut_p(item, crrt_Z);
         end
 
         newRowOut(item, crrt_Z);
@@ -192,6 +194,14 @@ class scoreboard extends uvm_scoreboard;
 
     virtual function void newRowOut(const ref Item item, bit [31:0] crrt_Z);
         $system($sformatf("echo '%b, %b, %b, %b, %b, %b, %b' >> sb_transaction_report.csv", item.fp_X, item.fp_Y, item.fp_Z, crrt_Z, item.r_mode, item.ovrf, item.udrf));
+    endfunction
+
+    virtual function void newRowOut_p(const ref Item item, bit [31:0] crrt_Z);
+        $system($sformatf("echo '%b, %b, %b, %b, %b, %b, %b' >> sb_PASS_transaction_report.csv", item.fp_X, item.fp_Y, item.fp_Z, crrt_Z, item.r_mode, item.ovrf, item.udrf));
+    endfunction
+
+    virtual function void newRowOut_e(const ref Item item, bit [31:0] crrt_Z);
+        $system($sformatf("echo '%b, %b, %b, %b, %b, %b, %b' >> sb_ERROR_transaction_report.csv", item.fp_X, item.fp_Y, item.fp_Z, crrt_Z, item.r_mode, item.ovrf, item.udrf));
     endfunction
 endclass
 
