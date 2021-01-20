@@ -153,7 +153,9 @@ class scoreboard extends uvm_scoreboard;
         
         und_Z  =!(|exp_field_Z)?1 : 0; //If exp is 0 then underflow
         und_Z= und_Z|und_Y|und_X;
+
         over_Z =(&exp_field_Z)? 1 : 0; //If exp field is 'd255 then overflow
+        over_Z = over_X|over_Y|over_Z;
 
        
         nan_X = &exp_field_X & |fract_field_X; //NaN definition
