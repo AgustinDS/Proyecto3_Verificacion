@@ -16,11 +16,11 @@ interface dut_if (input bit clk);
 
 
   property und;
-    @(negedge clk) ~|cb.fp_Z[30:22] |-> cb.udrf;
+    @(negedge clk) (~|cb.fp_Z[30:23] & ~cb.fp_Z[22]) |-> cb.udrf;
   endproperty
 
   property ovr;
-    @(negedge clk) &cb.fp_Z[30:22] |-> cb.ovrf;
+    @(negedge clk) (&cb.fp_Z[30:23] & ~cb.fp_Z[22]) |-> cb.ovrf;
   endproperty
 
    a_und: assert property (und) else $display("Underflow Flag Error");
