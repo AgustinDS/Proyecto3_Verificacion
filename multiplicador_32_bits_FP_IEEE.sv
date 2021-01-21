@@ -709,19 +709,29 @@ endmodule
 module EXP(
   input norm,
   input [7:0]exp_X, exp_Y,
+  input nan,
   output [7:0]exp_Z,
   output ovrf, udrf);
   
   wire [8:0]buffer;
+  wire inf_X, inf_Y;
+  wire zer_X, zer_Y;
   
   assign buffer = exp_X + exp_Y;
   
   wire [7:0]bias;
+
+  assign zer_X = ~|exp_X;
+  assign zer_Y = ~|exp_Y;
+  
+  assign inf_X = &exp_X;
+  assign inf_Y = &exp_Y;
   
   assign bias = {7'b0111111, !norm};
   
-  assign ovrf = {buffer >= {255 + bias}};
-  assign udrf = {buffer <= bias};
+  assign ovrf = {!nan}&{{buffer >= {255 + bias}}|{inf_X}|{inf_Y}};
+  assign udrf = {!nan}&{{buffer <= bias}|{zer_X}|{zer_Y}};
+
   
   assign exp_Z = exp_X + exp_Y - bias;
   
@@ -821,6 +831,7 @@ module FPM(
   EXP EXP(.norm(norm_n | norm_r),
           .exp_X(exp_X),
           .exp_Y(exp_Y),
+          .nan(nan),
           
           .exp_Z(exp_Z),
           .ovrf(ovrf),
