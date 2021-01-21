@@ -32,7 +32,7 @@ class Item extends uvm_sequence_item;
     // Entradas NaN
     // Inf*0
     // 0*Inf
-    (&fp_X[30:23] & ~|fp_X[22:0])|(&fp_Y[30:23] & ~|fp_Y[22:0])|((&fp_X[30:23] & ~|fp_X[22:0]) & ~|fp_Y[23:0])|((&fp_Y[30:23] & ~|fp_Y[22:0]) & ~|fp_X[23:0]);
+    ((&fp_X[30:23] & ~|fp_X[22:0]) & ~|fp_Y[23:0])|((&fp_Y[30:23] & ~|fp_Y[22:0]) & ~|fp_X[23:0]);
   }
   
   virtual function string convert2str();
