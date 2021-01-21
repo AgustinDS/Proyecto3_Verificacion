@@ -166,7 +166,7 @@ class scoreboard extends uvm_scoreboard;
 
 
         if (nan_Z) begin
-            crrt_Z={sign_field_Z,8'hFF,1'b1,22'b0};  //correct result
+            crrt_Z={1'b0,8'hFF,1'b1,22'b0};  //correct result
         end 
         else if (und_Z) begin
             crrt_Z={sign_field_Z,8'b0,23'b0};  //correct result
